@@ -1,125 +1,103 @@
 public class SinglyLinkedList<E> {
-
-    private Node<E> head = null;
-    private Node<E> tail = null;
-    private int size = 0;
+    private Node head;
+    private Node tail;
+    private int size;
 
     public SinglyLinkedList() {
-
+        head = null;
+        tail = null;
+        size = 0;
     }
 
-    public int size() {
-        return size;
+    private class Node {
+        E element;
+        Node next;
+
+        Node(E element) {
+            this.element = element;
+            this.next = null;
+        }
     }
 
-    public boolean isEmpty() {
-        return size == 0;
+    public void addFirst(E element) {
+        Node newNode = new Node(element);
+        if (head == null) {
+            head = tail = newNode;
+        } else {
+            newNode.next = head;
+            head = newNode;
+        }
+        size++;
+    }
+
+    public void addLast(E element) {
+        Node newNode = new Node(element);
+        if (tail == null) {
+            head = tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
     }
 
     public E first() {
-        if (isEmpty()) {
-            return null;
-        }
-        return head.getElement();
+        if (head == null) return null;
+        return head.element;
     }
 
     public E last() {
-        if (isEmpty()) {
-            return null;
-        }
-        return tail.getElement();
+        if (tail == null) return null;
+        return tail.element;
     }
 
-    public void addFirst(E e) {
-        head = new Node<>(e, head);
-
-        if (isEmpty()) {
-            tail = head;
-        }
-        size++;
-    }
-
-    public void addLast(E e) {
-        Node<E> newest = new Node<>(e, null);
-        if (isEmpty()) {
-            head = newest;
-        } else {
-            tail.setNext(newest);
-        }
-        tail = newest;
-        size++;
-    }
-
-    public E removeFirst() {
-        if (isEmpty()) {
-            return null;
-        }
-
-        E answer = head.getElement();
-        head = head.getNext();
-        size--;
-
-        if (isEmpty()) {
-            tail = null;
-        }
-        return answer;
-    }
-
-    // Write your codes below
+    @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-
-        Node<E> current = head;
-
+        StringBuilder sb = new StringBuilder();
+        Node current = head;
         while (current != null) {
-            result.append(current.getElement());
-            current = current.getNext();
+            sb.append(current.element);
+            current = current.next;
         }
-
-        return result.toString();
+    
+        return sb.toString();
     }
 
-    public E removeLast() {
-        if (isEmpty()) {
-            return null;
+    public void removeLast() {
+        if (head == null) return;  // Empty list
+
+        if (head == tail) {  // Only one element
+            head = tail = null;
+            size--;
+            return;
         }
 
-        E answer = tail.getElement();
-
-        if (size == 1) {
-            head = null;
-            tail = null;
-            size = 0;
-            return answer;
+        // Traverse to second-to-last node
+        Node current = head;
+        while (current.next != tail) {
+            current = current.next;
         }
 
-        Node<E> current = head;
-
-        while (current.getNext() != tail) {
-            current = current.getNext();
-        }
-
-        current.setNext(null);
-        tail = current;
+        current.next = null;  // Remove last node
+        tail = current;       // Update tail
         size--;
-        return answer;
     }
 
     public void reverse() {
-        Node<E> previous = null;
-        Node<E> current = head;
+        if (head == null || head == tail) return;  // Empty or single element
 
-        tail = head;
+        Node prev = null;
+        Node current = head;
+        Node nextNode;
 
         while (current != null) {
-            Node<E> next = current.getNext();
-
-            current.setNext(previous);
-
-            previous = current;
-            current = next;
+            nextNode = current.next;  // Save next node
+            current.next = prev;      // Reverse the link
+            prev = current;           // Move prev forward
+            current = nextNode;       // Move current forward
         }
 
-        head = previous;
+        tail = head;      // Old head becomes new tail
+        head = prev;      // Old tail becomes new head
     }
 }
